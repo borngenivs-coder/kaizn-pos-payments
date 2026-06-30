@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_wave_form" model="ir.ui.view">
+        <field name="name">payment.provider.wave.form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <group name="provider_config" position="after">
+                <group name="wave_credentials"
+                       string="Clés API Wave"
+                       attrs="{'invisible': [('code', '!=', 'wave')]}">
+                    <field name="wave_api_key"        password="True" string="Clé API"/>
+                    <field name="wave_webhook_secret" password="True" string="Secret Webhook (whsec_...)"/>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>

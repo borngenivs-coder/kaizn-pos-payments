@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pos_payment_sn_base.QRDialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4 text-center">
+                <h4 t-esc="props.title"/>
+                <t t-if="props.qr_url">
+                    <img t-att-src="props.qr_url"
+                         class="img-fluid my-3"
+                         style="max-width:220px; border:4px solid #e0e0e0; border-radius:8px"/>
+                </t>
+                <t t-if="props.ussd">
+                    <p class="fs-2 fw-bold text-primary my-2" t-esc="props.ussd"/>
+                    <p class="text-muted small">Composez ce code sur votre téléphone</p>
+                </t>
+                <p class="text-muted mt-2">En attente de confirmation...</p>
+                <button class="btn btn-outline-secondary mt-3" t-on-click="props.onCancel">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

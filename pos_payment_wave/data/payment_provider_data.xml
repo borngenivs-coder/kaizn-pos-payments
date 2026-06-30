@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_wave" model="payment.provider">
+        <field name="name">Wave</field>
+        <field name="code">wave</field>
+        <field name="state">test</field>
+        <field name="allow_tokenization" eval="False"/>
+        <field name="support_manual_capture" eval="False"/>
+        <field name="support_refund">none</field>
+    </record>
+</odoo>

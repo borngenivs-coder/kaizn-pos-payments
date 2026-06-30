@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_paydunya_form" model="ir.ui.view">
+        <field name="name">payment.provider.paydunya.form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <group name="provider_config" position="after">
+                <group name="paydunya_credentials"
+                       string="Clés API PayDunya"
+                       attrs="{'invisible': [('code', '!=', 'paydunya')]}">
+                    <field name="paydunya_master_key"  password="True" string="Master Key"/>
+                    <field name="paydunya_private_key" password="True" string="Private Key"/>
+                    <field name="paydunya_public_key"  password="True" string="Public Key"/>
+                    <field name="paydunya_token"       password="True" string="Token"/>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>
