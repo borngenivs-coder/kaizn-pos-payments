@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import logging
 from odoo import _, api, models
 from odoo.exceptions import ValidationError
@@ -93,6 +95,12 @@ class PaymentTransaction(models.Model):
             self._set_canceled()
 
         return self.state
+
+    @staticmethod
+    def _verify_paydunya_webhook(payload_hash: str, master_key: str, token: str) -> bool:
+        """Vérifie le hash PayDunya : sha512(MASTER_KEY + token)."""
+        expected = hashlib.sha512(f"{master_key}{token}".encode()).hexdigest()
+        return hmac.compare_digest(expected, payload_hash)
 
     @api.model
     def pos_paydunya_create(self, vals):
