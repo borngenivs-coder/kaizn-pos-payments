@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import logging
 
-from odoo import _, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 _log = logging.getLogger(__name__)
@@ -11,9 +11,7 @@ _log = logging.getLogger(__name__)
 class PaymentTransaction(models.Model):
     _inherit = 'payment.transaction'
 
-    # -------------------------------------------------------------------------
-    # Création du paiement
-    # -------------------------------------------------------------------------
+    wave_checkout_url = fields.Char(readonly=True)
 
     def _send_payment_request(self):
         super()._send_payment_request()
@@ -38,7 +36,7 @@ class PaymentTransaction(models.Model):
             raise ValidationError(_('Wave : réponse invalide — %s') % data)
 
         self.provider_reference = session_id
-        self._wave_launch_url   = wave_launch_url
+        self.wave_checkout_url  = wave_launch_url
         _log.info('[Wave] Checkout session créée — id=%s', session_id)
 
     def _get_specific_rendering_values(self, processing_values):
@@ -48,7 +46,7 @@ class PaymentTransaction(models.Model):
         return {
             **res,
             'session_id':      self.provider_reference,
-            'wave_launch_url': getattr(self, '_wave_launch_url', ''),
+            'wave_launch_url': self.wave_checkout_url or '',
         }
 
     # -------------------------------------------------------------------------
@@ -101,5 +99,21 @@ class PaymentTransaction(models.Model):
     @staticmethod
     def _verify_wave_webhook(payload_bytes: bytes, signature_header: str, secret: str) -> bool:
         expected  = hmac.new(secret.encode(), payload_bytes, hashlib.sha256).hexdigest()
-        sig_value = signature_header.replace('sha256=', '')
+        sig_value = signature_header.removeprefix('sha256=')
         return hmac.compare_digest(expected, sig_value)
+
+    @api.model
+    def pos_wave_create(self, vals):
+        """Point d'entrée RPC POS pour initier un paiement Wave."""
+        tx = self._pos_create_transaction(
+            vals['provider_id'],
+            vals['amount'],
+            vals.get('currency', 'XOF'),
+            vals['reference'],
+        )
+        tx._send_payment_request()
+        return {
+            'reference':      tx.reference,
+            'session_id':     tx.provider_reference,
+            'wave_launch_url': tx.wave_checkout_url or '',
+        }
