@@ -106,7 +106,7 @@ class PaymentTransaction(models.Model):
     def pos_wave_create(self, vals):
         """Point d'entrée RPC POS pour initier un paiement Wave."""
         tx = self._pos_create_transaction(
-            vals['provider_id'],
+            vals['payment_method_id'],
             vals['amount'],
             vals.get('currency', 'XOF'),
             vals['reference'],

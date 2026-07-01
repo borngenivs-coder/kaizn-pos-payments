@@ -10,10 +10,10 @@ export class PaymentPayDunya extends PaymentSNInterface {
                 "payment.transaction",
                 "pos_paydunya_create",
                 [[], {
-                    amount:      line.amount,
-                    currency:    this.pos.currency.name,
+                    amount:             line.amount,
+                    currency:           this.pos.currency.name,
                     reference,
-                    provider_id: this.payment_method.payment_method_id,
+                    payment_method_id:  this.payment_method.id,
                 }]
             );
 

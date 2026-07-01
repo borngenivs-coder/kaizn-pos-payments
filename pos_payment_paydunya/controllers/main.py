@@ -30,8 +30,8 @@ class PayDunyaController(http.Controller):
             return request.make_response('Not found', status=404)
 
         master_key    = tx.provider_id.sudo().paydunya_master_key or ''
-        payload_hash  = data.get('hash', '')
-        token         = data.get('token', '')
+        payload_hash  = data.get('hash') or ''
+        token         = data.get('token') or ''
 
         if not master_key:
             _log.error('[PayDunya] paydunya_master_key non configuré pour %s', tx.provider_id.name)

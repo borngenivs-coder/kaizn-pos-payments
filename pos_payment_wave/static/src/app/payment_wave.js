@@ -10,10 +10,10 @@ export class PaymentWave extends PaymentSNInterface {
                 "payment.transaction",
                 "pos_wave_create",
                 [[], {
-                    amount:      line.amount,
-                    currency:    "XOF",
+                    amount:            line.amount,
+                    currency:          "XOF",
                     reference,
-                    provider_id: this.payment_method.payment_method_id,
+                    payment_method_id: this.payment_method.id,
                 }]
             );
 

@@ -29,6 +29,6 @@ class PaymentProvider(models.Model):
                 resp = requests.post(url, json=payload, headers=self._wave_headers(), timeout=30)
             resp.raise_for_status()
             return resp.json()
-        except requests.RequestException as e:
+        except (requests.RequestException, ValueError) as e:
             _log.error('[Wave] %s %s — %s', method, endpoint, e)
             raise ValidationError(_('Wave : erreur réseau — %s') % e)

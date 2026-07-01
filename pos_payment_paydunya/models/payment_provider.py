@@ -20,6 +20,11 @@ class PaymentProvider(models.Model):
     def _paydunya_base_url(self):
         return _PROD_URL if self.state == 'enabled' else _SANDBOX_URL
 
+    def _paydunya_checkout_url(self, token):
+        if self.state == 'enabled':
+            return f"https://app.paydunya.com/checkout/invoice/{token}"
+        return f"https://app.paydunya.com/sandbox-checkout/invoice/{token}"
+
     def _paydunya_headers(self):
         return {
             'PAYDUNYA-MASTER-KEY':  self.sudo().paydunya_master_key  or '',
@@ -38,6 +43,6 @@ class PaymentProvider(models.Model):
                 resp = requests.post(url, json=payload, headers=self._paydunya_headers(), timeout=30)
             resp.raise_for_status()
             return resp.json()
-        except requests.RequestException as e:
+        except (requests.RequestException, ValueError) as e:
             _log.error('[PayDunya] %s %s — %s', method, endpoint, e)
             raise ValidationError(_('PayDunya : erreur réseau — %s') % e)

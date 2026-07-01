@@ -1,10 +1,6 @@
 import { PaymentInterface } from "@point_of_sale/app/payment/payment_interface";
 import { _t } from "@web/core/l10n/translation";
 
-/**
- * Classe de base pour les providers de paiement mobile SN.
- * Pattern : créer transaction → afficher QR/USSD → poll statut → done/timeout.
- */
 export class PaymentSNInterface extends PaymentInterface {
 
     get POLL_INTERVAL() { return 2500; }
@@ -14,9 +10,11 @@ export class PaymentSNInterface extends PaymentInterface {
         super.setup(...arguments);
         this._pollTimer = null;
         this._startTime = null;
+        this._currentReference = null;
     }
 
     async send_payment_request(uuid) {
+        this._clearPollTimer();
         const line = this.pos.getPendingPaymentLine();
         if (!line) return false;
 
@@ -24,18 +22,28 @@ export class PaymentSNInterface extends PaymentInterface {
         const result = await this._initPayment(line, uuid);
         if (!result) return false;
 
+        this._currentReference = result.reference;
         return await this._pollUntilDone(result.reference, uuid);
     }
 
     async send_payment_cancel(order, uuid) {
         this._clearPollTimer();
+        const ref = this._currentReference;
+        this._currentReference = null;
+        if (ref) {
+            try {
+                await this.pos.data.call(
+                    "payment.transaction",
+                    "cancel_pos_payment",
+                    [[], ref]
+                );
+            } catch (e) {
+                // non-bloquant : le cron Odoo nettoiera les transactions expirées
+            }
+        }
         return true;
     }
 
-    /**
-     * Surchargée par chaque adaptateur.
-     * Doit créer la transaction côté serveur et retourner {reference, ...}.
-     */
     async _initPayment(line, uuid) {
         throw new Error("_initPayment() doit être surchargé par chaque adaptateur");
     }
@@ -45,6 +53,7 @@ export class PaymentSNInterface extends PaymentInterface {
             const check = async () => {
                 if (Date.now() - this._startTime > this.PAYMENT_TIMEOUT) {
                     this._clearPollTimer();
+                    this._currentReference = null;
                     this.pos.env.services.notification.add(
                         _t("Paiement expiré — veuillez réessayer."),
                         { type: "danger" }
@@ -60,9 +69,11 @@ export class PaymentSNInterface extends PaymentInterface {
                     );
                     if (status.state === "done") {
                         this._clearPollTimer();
+                        this._currentReference = null;
                         resolve(true);
                     } else if (["cancel", "error", "refused"].includes(status.state)) {
                         this._clearPollTimer();
+                        this._currentReference = null;
                         resolve(false);
                     } else {
                         this._pollTimer = setTimeout(check, this.POLL_INTERVAL);
