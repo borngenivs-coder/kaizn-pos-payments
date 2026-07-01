@@ -4,7 +4,8 @@ import { _t } from "@web/core/l10n/translation";
 export class PaymentWave extends PaymentSNInterface {
 
     async _initPayment(line, uuid) {
-        const reference = `POS-WAVE-${this.pos.session.id}-${Date.now()}`;
+        const rand = Math.random().toString(36).slice(2, 7);
+        const reference = `POS-WAVE-${this.pos.session.id}-${Date.now()}-${rand}`;
         try {
             const result = await this.pos.data.call(
                 "payment.transaction",

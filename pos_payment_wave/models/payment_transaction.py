@@ -11,7 +11,7 @@ _log = logging.getLogger(__name__)
 class PaymentTransaction(models.Model):
     _inherit = 'payment.transaction'
 
-    wave_checkout_url = fields.Char(readonly=True)
+    wave_checkout_url = fields.Char(readonly=True, copy=False)
 
     def _send_payment_request(self):
         super()._send_payment_request()

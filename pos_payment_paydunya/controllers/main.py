@@ -37,7 +37,10 @@ class PayDunyaController(http.Controller):
             _log.error('[PayDunya] paydunya_master_key non configuré pour %s', tx.provider_id.name)
             return request.make_response('Webhook key not configured', status=500)
 
-        if not tx._verify_paydunya_webhook(payload_hash, master_key, token):
+        provider = tx.provider_id.sudo()
+        if provider.state != 'enabled' and not payload_hash:
+            _log.warning('[PayDunya] Webhook sans hash en mode test — vérification ignorée pour %s', ref)
+        elif not tx._verify_paydunya_webhook(payload_hash, master_key, token):
             _log.error('[PayDunya] Hash invalide pour %s', ref)
             return request.make_response('Invalid hash', status=401)
 

@@ -1,5 +1,4 @@
 import logging
-import requests
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError
 
@@ -21,14 +20,8 @@ class PaymentProvider(models.Model):
         }
 
     def _wave_request(self, endpoint, payload=None, method='POST'):
-        url = f"{_WAVE_API}/{endpoint}"
-        try:
-            if method == 'GET':
-                resp = requests.get(url, headers=self._wave_headers(), timeout=30)
-            else:
-                resp = requests.post(url, json=payload, headers=self._wave_headers(), timeout=30)
-            resp.raise_for_status()
-            return resp.json()
-        except (requests.RequestException, ValueError) as e:
-            _log.error('[Wave] %s %s — %s', method, endpoint, e)
-            raise ValidationError(_('Wave : erreur réseau — %s') % e)
+        return self._sn_http_request(
+            f"{_WAVE_API}/{endpoint}",
+            self._wave_headers(),
+            payload, method,
+        )
