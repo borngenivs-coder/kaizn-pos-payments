@@ -54,7 +54,7 @@ export class PaymentSNInterface extends PaymentInterface {
                 }
                 try {
                     const status = await this.pos.data.call(
-                        "pos.payment.method",
+                        "payment.transaction",
                         "get_payment_status",
                         [[], reference]
                     );

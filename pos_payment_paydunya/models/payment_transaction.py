@@ -1,5 +1,7 @@
+import hashlib
+import hmac
 import logging
-from odoo import _, models
+from odoo import _, api, models
 from odoo.exceptions import ValidationError
 
 _log = logging.getLogger(__name__)
@@ -93,3 +95,25 @@ class PaymentTransaction(models.Model):
             self._set_canceled()
 
         return self.state
+
+    @staticmethod
+    def _verify_paydunya_webhook(payload_hash: str, master_key: str, token: str) -> bool:
+        """Vérifie le hash PayDunya : sha512(MASTER_KEY + token)."""
+        expected = hashlib.sha512(f"{master_key}{token}".encode()).hexdigest()
+        return hmac.compare_digest(expected, payload_hash)
+
+    @api.model
+    def pos_paydunya_create(self, vals):
+        """Point d'entrée RPC POS pour initier un paiement PayDunya."""
+        tx = self._pos_create_transaction(
+            vals['provider_id'],
+            vals['amount'],
+            vals.get('currency', 'XOF'),
+            vals['reference'],
+        )
+        tx._send_payment_request()
+        return {
+            'reference':    tx.reference,
+            'token':        tx.provider_reference,
+            'checkout_url': f"https://app.paydunya.com/checkout/invoice/{tx.provider_reference}",
+        }

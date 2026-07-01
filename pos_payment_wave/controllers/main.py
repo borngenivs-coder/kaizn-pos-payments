@@ -32,7 +32,11 @@ class WaveController(http.Controller):
             return request.make_response('Not found', status=404)
 
         secret = tx.provider_id.sudo().wave_webhook_secret
-        if secret and not tx._verify_wave_webhook(payload_bytes, signature, secret):
+        if not secret:
+            _log.error('[Wave] wave_webhook_secret non configuré pour %s', tx.provider_id.name)
+            return request.make_response('Webhook secret not configured', status=500)
+
+        if not tx._verify_wave_webhook(payload_bytes, signature, secret):
             _log.error('[Wave] Signature invalide pour %s', client_ref)
             return request.make_response('Invalid signature', status=401)
 
