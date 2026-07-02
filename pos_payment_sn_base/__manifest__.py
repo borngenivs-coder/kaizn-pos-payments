@@ -13,6 +13,7 @@
     'assets': {
         'point_of_sale._assets_pos': [
             'pos_payment_sn_base/static/src/app/payment_sn_interface.js',
+            'pos_payment_sn_base/static/src/app/payment_sn_wave_dialog.js',
             'pos_payment_sn_base/static/src/app/payment_sn_qr_dialog.xml',
         ],
     },

@@ -1,4 +1,5 @@
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
+import { register_payment_method } from "@point_of_sale/app/services/pos_store";
 import { _t } from "@web/core/l10n/translation";
 
 export class PaymentPayDunya extends PaymentSNInterface {
@@ -11,10 +12,10 @@ export class PaymentPayDunya extends PaymentSNInterface {
                 "payment.transaction",
                 "pos_paydunya_create",
                 [[], {
-                    amount:             line.amount,
-                    currency:           this.pos.currency.name,
+                    amount:            line.amount,
+                    currency:          this.pos.currency.name,
                     reference,
-                    payment_method_id:  this.payment_method.id,
+                    payment_method_id: this.payment_method.id,
                 }]
             );
 
@@ -43,6 +44,4 @@ export class PaymentPayDunya extends PaymentSNInterface {
     }
 }
 
-// TODO: vérifier le nom exact du registre sur Odoo 19 (peut différer d'Odoo 17)
-import { paymentMethodRegistry } from "@point_of_sale/app/payment/payment_method_registry";
-paymentMethodRegistry.add("paydunya", PaymentPayDunya);
+register_payment_method("paydunya", PaymentPayDunya);

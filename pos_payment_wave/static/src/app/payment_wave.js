@@ -1,7 +1,25 @@
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
+import { WavePaymentDialog } from "@pos_payment_sn_base/app/payment_sn_wave_dialog";
+import { register_payment_method } from "@point_of_sale/app/services/pos_store";
 import { _t } from "@web/core/l10n/translation";
 
 export class PaymentWave extends PaymentSNInterface {
+
+    setup() {
+        super.setup(...arguments);
+        this._closeWaveDialog = null;
+    }
+
+    async send_payment_request(uuid) {
+        const result = await super.send_payment_request(uuid);
+        this._closeDialog();
+        return result;
+    }
+
+    async send_payment_cancel(order, uuid) {
+        this._closeDialog();
+        return super.send_payment_cancel(order, uuid);
+    }
 
     async _initPayment(line, uuid) {
         const rand = Math.random().toString(36).slice(2, 7);
@@ -26,10 +44,10 @@ export class PaymentWave extends PaymentSNInterface {
                 return null;
             }
 
-            this.pos.env.services.notification.add(
-                _t("Scannez le QR Wave ou partagez le lien de paiement."),
-                { type: "info", sticky: true }
-            );
+            this._closeWaveDialog = this.pos.env.services.dialog.add(WavePaymentDialog, {
+                waveUrl: result.wave_launch_url,
+                amount:  line.amount,
+            });
 
             return { reference: result.reference };
 
@@ -41,8 +59,13 @@ export class PaymentWave extends PaymentSNInterface {
             return null;
         }
     }
+
+    _closeDialog() {
+        if (this._closeWaveDialog) {
+            this._closeWaveDialog();
+            this._closeWaveDialog = null;
+        }
+    }
 }
 
-// TODO: vérifier le nom exact du registre sur Odoo 19 (peut différer d'Odoo 17)
-import { paymentMethodRegistry } from "@point_of_sale/app/payment/payment_method_registry";
-paymentMethodRegistry.add("wave", PaymentWave);
+register_payment_method("wave", PaymentWave);
