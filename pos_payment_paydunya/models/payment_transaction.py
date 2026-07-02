@@ -54,7 +54,7 @@ class PaymentTransaction(models.Model):
             return res
         return {
             **res,
-            'checkout_url': f"https://app.paydunya.com/checkout/invoice/{self.provider_reference}",
+            'checkout_url': self.provider_id._paydunya_checkout_url(self.provider_reference),
             'token': self.provider_reference,
         }
 
@@ -102,18 +102,14 @@ class PaymentTransaction(models.Model):
         expected = hashlib.sha512(f"{master_key}{token}".encode()).hexdigest()
         return hmac.compare_digest(expected, payload_hash)
 
+    def _sn_pos_response(self):
+        return {
+            'reference':    self.reference,
+            'token':        self.provider_reference,
+            'checkout_url': self.provider_id._paydunya_checkout_url(self.provider_reference),
+        }
+
     @api.model
     def pos_paydunya_create(self, vals):
         """Point d'entrée RPC POS pour initier un paiement PayDunya."""
-        tx = self._pos_create_transaction(
-            vals['payment_method_id'],
-            vals['amount'],
-            vals.get('currency', 'XOF'),
-            vals['reference'],
-        )
-        tx._send_payment_request()
-        return {
-            'reference':    tx.reference,
-            'token':        tx.provider_reference,
-            'checkout_url': tx.provider_id._paydunya_checkout_url(tx.provider_reference),
-        }
+        return self._sn_pos_create(vals)

@@ -102,18 +102,14 @@ class PaymentTransaction(models.Model):
         sig_value = signature_header.removeprefix('sha256=')
         return hmac.compare_digest(expected, sig_value)
 
+    def _sn_pos_response(self):
+        return {
+            'reference':       self.reference,
+            'session_id':      self.provider_reference,
+            'wave_launch_url': self.wave_checkout_url or '',
+        }
+
     @api.model
     def pos_wave_create(self, vals):
         """Point d'entrée RPC POS pour initier un paiement Wave."""
-        tx = self._pos_create_transaction(
-            vals['payment_method_id'],
-            vals['amount'],
-            vals.get('currency', 'XOF'),
-            vals['reference'],
-        )
-        tx._send_payment_request()
-        return {
-            'reference':      tx.reference,
-            'session_id':     tx.provider_reference,
-            'wave_launch_url': tx.wave_checkout_url or '',
-        }
+        return self._sn_pos_create(vals)

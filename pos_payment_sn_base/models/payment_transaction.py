@@ -35,6 +35,22 @@ class PaymentTransaction(models.Model):
         })
 
     @api.model
+    def _sn_pos_create(self, vals):
+        """Point d'entrée commun : crée la tx, envoie la requête, retourne _sn_pos_response()."""
+        tx = self._pos_create_transaction(
+            vals['payment_method_id'],
+            vals['amount'],
+            vals.get('currency', 'XOF'),
+            vals['reference'],
+        )
+        tx._send_payment_request()
+        return tx._sn_pos_response()
+
+    def _sn_pos_response(self):
+        """Hook : dict retourné au frontend POS. Surchargé par chaque adaptateur."""
+        return {'reference': self.reference}
+
+    @api.model
     def cancel_pos_payment(self, reference):
         """Annule la transaction POS en attente — appelé depuis send_payment_cancel."""
         tx = self.sudo().search(
