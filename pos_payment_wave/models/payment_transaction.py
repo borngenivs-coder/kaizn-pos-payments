@@ -28,6 +28,11 @@ class PaymentTransaction(models.Model):
             'error_url':        f"{base_url}/payment/wave/cancel",
         }
 
+        if self.currency_id.name != 'XOF':
+            raise ValidationError(_(
+                'Wave ne supporte que le XOF (devise actuelle : %s)'
+            ) % self.currency_id.name)
+
         data = provider._wave_request('checkout/sessions', payload)
         session_id      = data.get('id')
         wave_launch_url = data.get('wave_launch_url')

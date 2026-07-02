@@ -20,9 +20,6 @@ class PayDunyaController(SnWebhookMixin, http.Controller):
                 return False
             payload_hash = data.get('hash') or ''
             token = data.get('token') or ''
-            if tx.provider_id.sudo().state != 'enabled' and not payload_hash:
-                _log.warning('[PayDunya] Webhook sans hash en mode test — vérification ignorée pour %s', tx.reference)
-                return True
             return tx._verify_paydunya_webhook(payload_hash, master_key, token)
 
         return self._handle_sn_webhook('PayDunya', get_reference, verify)
