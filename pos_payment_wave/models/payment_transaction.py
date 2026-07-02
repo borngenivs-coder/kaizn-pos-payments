@@ -103,6 +103,8 @@ class PaymentTransaction(models.Model):
         return hmac.compare_digest(expected, sig_value)
 
     def _sn_pos_response(self):
+        if self.provider_code != 'wave':
+            return super()._sn_pos_response()
         return {
             'reference':       self.reference,
             'session_id':      self.provider_reference,

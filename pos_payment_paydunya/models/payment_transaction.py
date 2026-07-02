@@ -103,6 +103,8 @@ class PaymentTransaction(models.Model):
         return hmac.compare_digest(expected, payload_hash)
 
     def _sn_pos_response(self):
+        if self.provider_code != 'paydunya':
+            return super()._sn_pos_response()
         return {
             'reference':    self.reference,
             'token':        self.provider_reference,
