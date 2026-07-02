@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class PosPaymentMethod(models.Model):
@@ -11,13 +11,11 @@ class PosPaymentMethod(models.Model):
         help="Provider lié à ce mode de paiement POS (Wave, PayDunya...).",
     )
 
-    use_payment_terminal = fields.Selection(
-        selection_add=[
+    @api.model
+    def _get_payment_terminal_selection(self):
+        result = super()._get_payment_terminal_selection()
+        result += [
             ('paydunya', 'PayDunya (Orange Money / Visa)'),
             ('wave', 'Wave'),
-        ],
-        ondelete={
-            'paydunya': 'set default',
-            'wave': 'set default',
-        },
-    )
+        ]
+        return result
