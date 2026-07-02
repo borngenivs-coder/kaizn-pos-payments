@@ -8,7 +8,7 @@
             <group name="provider_config" position="after">
                 <group name="wave_credentials"
                        string="Clés API Wave"
-                       attrs="{'invisible': [('code', '!=', 'wave')]}">
+                       invisible="code != 'wave'">
                     <field name="wave_api_key"        password="True" string="Clé API"/>
                     <field name="wave_webhook_secret" password="True" string="Secret Webhook (whsec_...)"/>
                 </group>
