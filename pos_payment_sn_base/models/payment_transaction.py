@@ -25,13 +25,20 @@ class PaymentTransaction(models.Model):
         currency = self.env['res.currency'].search([('name', '=', currency_name)], limit=1)
         if not currency:
             raise UserError(_('Devise %s introuvable.') % currency_name)
+        provider = pm.payment_provider_id
+        payment_method = provider.payment_method_ids[:1]
+        if not payment_method:
+            raise UserError(_(
+                'Le fournisseur "%s" n\'a pas de méthode de paiement configurée.'
+            ) % provider.name)
         return self.sudo().create({
-            'amount':      amount,
-            'currency_id': currency.id,
-            'provider_id': pm.payment_provider_id.id,
-            'reference':   reference,
-            'partner_id':  self.env.company.partner_id.id,
-            'operation':   'online_redirect',
+            'amount':            amount,
+            'currency_id':       currency.id,
+            'provider_id':       provider.id,
+            'payment_method_id': payment_method.id,
+            'reference':         reference,
+            'partner_id':        self.env.company.partner_id.id,
+            'operation':         'online_redirect',
         })
 
     @api.model
