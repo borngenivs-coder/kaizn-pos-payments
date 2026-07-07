@@ -9,8 +9,11 @@
                 <group name="wave_credentials"
                        string="Clés API Wave"
                        invisible="code != 'wave'">
-                    <field name="wave_api_key"        password="True" string="Clé API"/>
-                    <field name="wave_webhook_secret" password="True" string="Secret Webhook (whsec_...)"/>
+                    <field name="wave_test_mode" string="Mode test"/>
+                    <field name="wave_api_key"        password="True" string="Clé API"
+                           invisible="wave_test_mode"/>
+                    <field name="wave_webhook_secret" password="True" string="Secret Webhook (whsec_...)"
+                           invisible="wave_test_mode"/>
                 </group>
             </group>
         </field>

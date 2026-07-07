@@ -12,6 +12,7 @@ class PaymentProvider(models.Model):
 
     wave_api_key        = fields.Char('Clé API Wave',        groups='base.group_system')
     wave_webhook_secret = fields.Char('Secret Webhook Wave', groups='base.group_system')
+    wave_test_mode      = fields.Boolean('Mode test (sans appel API)', default=False)
 
     def _wave_headers(self):
         return {

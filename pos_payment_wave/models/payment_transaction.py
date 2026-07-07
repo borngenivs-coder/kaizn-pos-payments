@@ -19,6 +19,18 @@ class PaymentTransaction(models.Model):
             return
 
         provider = self.provider_id
+
+        if provider.wave_test_mode:
+            self.provider_reference = f"test_wave_{self.reference}"
+            self.wave_checkout_url  = "https://pay.wave.com/m/test_checkout"
+            _log.info('[Wave TEST] Session simulée — ref=%s', self.provider_reference)
+            return
+
+        if self.currency_id.name != 'XOF':
+            raise ValidationError(_(
+                'Wave ne supporte que le XOF (devise actuelle : %s)'
+            ) % self.currency_id.name)
+
         base_url = self.get_base_url()
         payload = {
             'amount':           str(int(self.amount)),
@@ -27,14 +39,8 @@ class PaymentTransaction(models.Model):
             'success_url':      f"{base_url}/payment/wave/return",
             'error_url':        f"{base_url}/payment/wave/cancel",
         }
-
-        if self.currency_id.name != 'XOF':
-            raise ValidationError(_(
-                'Wave ne supporte que le XOF (devise actuelle : %s)'
-            ) % self.currency_id.name)
-
         data = provider._wave_request('checkout/sessions', payload)
-        session_id      = data.get('id')
+        session_id      = data.get('id') or data.get('session_id')
         wave_launch_url = data.get('wave_launch_url')
 
         if not session_id or not wave_launch_url:
@@ -84,6 +90,12 @@ class PaymentTransaction(models.Model):
         if self.provider_code != 'wave':
             return super()._get_tx_status()
         if not self.provider_reference:
+            return self.state
+
+        if self.provider_id.wave_test_mode:
+            if self.state == 'pending':
+                self._set_done()
+                _log.info('[Wave TEST] Transaction auto-confirmée — ref=%s', self.reference)
             return self.state
 
         data   = self.provider_id._wave_request(
