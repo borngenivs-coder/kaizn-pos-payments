@@ -1,6 +1,6 @@
 {
     'name': 'POS Paiement — PayDunya (Orange Money / Visa)',
-    'version': '19.0.1.0.0',
+    'version': '17.0.1.0.0',
     'category': 'Point of Sale',
     'summary': 'Paiement POS via PayDunya — Orange Money, Visa (Sénégal/CEDEAO)',
     'author': 'KAIZN SN',

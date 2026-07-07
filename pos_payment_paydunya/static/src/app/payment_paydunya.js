@@ -1,5 +1,5 @@
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
-import { register_payment_method } from "@point_of_sale/app/services/pos_store";
+import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 
 export class PaymentPayDunya extends PaymentSNInterface {
@@ -44,4 +44,4 @@ export class PaymentPayDunya extends PaymentSNInterface {
     }
 }
 
-register_payment_method("paydunya", PaymentPayDunya);
+registry.category("pos_payment_methods").add("paydunya", PaymentPayDunya);

@@ -1,6 +1,6 @@
 {
     'name': 'POS Paiement Mobile SN — Socle',
-    'version': '19.0.1.0.0',
+    'version': '17.0.1.0.0',
     'category': 'Point of Sale',
     'summary': 'Socle commun pour connecteurs paiement mobile Sénégal/CEDEAO (Wave, Orange Money, Visa)',
     'author': 'KAIZN SN',

@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="pos_payment_sn_base.WavePaymentDialog">
-        <Dialog title="'Paiement Wave'" size="'md'">
+        <Dialog title="'Paiement Wave'" size="'md'" footer="false">
             <div class="text-center p-4">
-                <p class="fw-bold fs-4 mb-3">
+                <p class="fw-bold fs-4 mb-1">
                     <t t-esc="props.amount"/> XOF
                 </p>
-                <p class="mb-3">Partagez ce lien Wave avec le client :</p>
+                <p class="text-muted mb-4">Montant à régler via Wave</p>
                 <div class="mb-4">
-                    <a t-att-href="props.waveUrl" target="_blank" class="btn btn-success btn-lg px-4">
-                        Ouvrir Wave
+                    <a t-att-href="props.waveUrl" target="_blank"
+                       class="btn btn-success btn-lg px-5">
+                        Ouvrir l'application Wave
                     </a>
                 </div>
-                <p class="text-muted small mb-0">En attente de confirmation du paiement…</p>
+                <p class="text-muted small mb-3">
+                    Montrez ce lien au client ou ouvrez Wave sur son téléphone.
+                </p>
+                <div class="d-flex align-items-center justify-content-center gap-2 text-muted">
+                    <span class="spinner-border spinner-border-sm" role="status"/>
+                    <span>En attente de confirmation…</span>
+                </div>
             </div>
         </Dialog>
     </t>

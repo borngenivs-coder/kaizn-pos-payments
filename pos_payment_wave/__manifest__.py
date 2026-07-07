@@ -1,6 +1,6 @@
 {
     'name': 'POS Paiement — Wave',
-    'version': '19.0.1.0.0',
+    'version': '17.0.1.0.0',
     'category': 'Point of Sale',
     'summary': 'Paiement POS directement via Wave (API officielle wave.com) — Sénégal',
     'author': 'KAIZN SN',

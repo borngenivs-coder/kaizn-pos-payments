@@ -1,6 +1,6 @@
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
 import { WavePaymentDialog } from "@pos_payment_sn_base/app/payment_sn_wave_dialog";
-import { register_payment_method } from "@point_of_sale/app/services/pos_store";
+import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 
 export class PaymentWave extends PaymentSNInterface {
@@ -68,4 +68,4 @@ export class PaymentWave extends PaymentSNInterface {
     }
 }
 
-register_payment_method("wave", PaymentWave);
+registry.category("pos_payment_methods").add("wave", PaymentWave);
