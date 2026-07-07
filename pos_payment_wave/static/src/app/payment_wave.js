@@ -1,3 +1,4 @@
+/** @odoo-module */
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
 import { WavePaymentDialog } from "@pos_payment_sn_base/app/payment_sn_wave_dialog";
 import { registry } from "@web/core/registry";

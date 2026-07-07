@@ -1,3 +1,4 @@
+/** @odoo-module */
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
