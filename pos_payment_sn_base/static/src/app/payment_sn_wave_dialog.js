@@ -12,6 +12,6 @@ export class WavePaymentDialog extends Component {
     };
 
     get qrSrc() {
-        return `/report/barcode/?barcode_type=QR&value=${encodeURIComponent(this.props.waveUrl)}&width=280&height=280`;
+        return `/report/barcode?barcode_type=QR&value=${encodeURIComponent(this.props.waveUrl)}&width=280&height=280`;
     }
 }
