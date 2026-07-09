@@ -33,7 +33,7 @@ class PaymentTransaction(models.Model):
 
         base_url = self.get_base_url()
         payload = {
-            'amount':           str(int(self.amount)),
+            'amount':           str(round(self.amount)),
             'currency':         'XOF',
             'client_reference': self.reference,
             'success_url':      f"{base_url}/payment/wave/return",

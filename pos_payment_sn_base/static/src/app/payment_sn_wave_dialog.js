@@ -10,4 +10,8 @@ export class WavePaymentDialog extends Component {
         amount: Number,
         close: Function,
     };
+
+    get qrSrc() {
+        return `/report/barcode/?barcode_type=QR&value=${encodeURIComponent(this.props.waveUrl)}&width=280&height=280`;
+    }
 }
