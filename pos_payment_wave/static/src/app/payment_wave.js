@@ -37,7 +37,7 @@ export class PaymentWave extends PaymentSNInterface {
 
     async _initPayment(line, uuid) {
         // Détection mode statique : QR statique configuré et pas de clé API
-        if (this.payment_method.wave_static_mode && this.payment_method.wave_static_qr) {
+        if (this.payment_method.wave_static_mode) {
             return await this._initStaticPayment(line, uuid);
         }
         return await this._initDynamicPayment(line, uuid);
@@ -45,11 +45,8 @@ export class PaymentWave extends PaymentSNInterface {
 
     async _initStaticPayment(line, uuid) {
         return new Promise((resolve) => {
-            const qrSrc = `data:image/png;base64,${this.payment_method.wave_static_qr}`;
-
             const closeDialog = this.pos.env.services.dialog.add(WaveStaticDialog, {
                 amount: line.amount,
-                qrSrc,
                 onConfirm: () => {
                     closeDialog();
                     this._closeWaveDialog = null;

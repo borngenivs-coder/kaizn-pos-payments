@@ -7,7 +7,6 @@ export class WaveStaticDialog extends Component {
     static components = { Dialog };
     static props = {
         amount: Number,
-        qrSrc: String,
         onConfirm: Function,
         onCancel: Function,
         close: Function,

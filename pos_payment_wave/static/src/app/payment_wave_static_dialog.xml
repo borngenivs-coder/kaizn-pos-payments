@@ -8,7 +8,9 @@
                 </p>
                 <p class="text-muted mb-3">Le client doit saisir exactement ce montant</p>
                 <div class="mb-3">
-                    <img t-att-src="props.qrSrc" alt="QR Wave" style="width:280px;height:280px;object-fit:contain;"/>
+                    <img src="/pos_payment_wave/static/src/static_wave_qr.png"
+                         alt="QR Wave"
+                         style="width:280px;height:280px;object-fit:contain;"/>
                 </div>
                 <p class="text-muted small mb-4">Scannez avec l'application Wave</p>
                 <div class="d-flex gap-2 justify-content-center">

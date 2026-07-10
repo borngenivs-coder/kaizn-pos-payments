@@ -10,13 +10,11 @@
                        string="Clés API Wave"
                        invisible="code != 'wave'">
                     <field name="wave_test_mode" string="Mode test"/>
+                    <field name="wave_static_mode" string="Mode statique (QR fixe)"/>
                     <field name="wave_api_key"        password="True" string="Clé API"
-                           invisible="wave_test_mode"/>
+                           invisible="wave_test_mode or wave_static_mode"/>
                     <field name="wave_webhook_secret" password="True" string="Secret Webhook (whsec_...)"
-                           invisible="wave_test_mode"/>
-                    <field name="wave_static_qr" widget="image" string="QR Code statique (sans API)"
-                           options="{'size': [200, 200]}"
-                           help="Image QR du compte Wave marchand. Utilisé en mode statique quand la Clé API n'est pas renseignée."/>
+                           invisible="wave_test_mode or wave_static_mode"/>
                 </group>
             </group>
         </field>
