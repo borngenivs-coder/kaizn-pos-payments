@@ -17,6 +17,7 @@
             'pos_payment_sn_base/static/src/app/payment_sn_qr_dialog.xml',
         ],
     },
+    'external_dependencies': {'python': ['rlPyCairo', 'freetype']},
     'installable': True,
     'auto_install': False,
     'license': 'LGPL-3',
