@@ -12,6 +12,8 @@
     ],
     'assets': {
         'point_of_sale._assets_pos': [
+            'pos_payment_wave/static/src/app/payment_wave_static_dialog.xml',
+            'pos_payment_wave/static/src/app/payment_wave_static_dialog.js',
             'pos_payment_wave/static/src/app/payment_wave.js',
             'pos_payment_wave/static/src/app/payment_screen_wave_patch.js',
         ],

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pos_payment_wave.WaveStaticDialog">
+        <Dialog title="'Paiement Wave'" size="'md'" footer="false">
+            <div class="text-center p-4">
+                <p class="fw-bold" style="font-size:2rem; color:#1a73e8;">
+                    <t t-esc="props.amount"/> XOF
+                </p>
+                <p class="text-muted mb-3">Le client doit saisir exactement ce montant</p>
+                <div class="mb-3">
+                    <img t-att-src="props.qrSrc" alt="QR Wave" style="width:280px;height:280px;object-fit:contain;"/>
+                </div>
+                <p class="text-muted small mb-4">Scannez avec l'application Wave</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button class="btn btn-success btn-lg" t-on-click="props.onConfirm">
+                        Paiement reçu
+                    </button>
+                    <button class="btn btn-outline-secondary" t-on-click="props.onCancel">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

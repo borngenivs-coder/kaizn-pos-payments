@@ -1,6 +1,7 @@
 /** @odoo-module */
 import { PaymentSNInterface } from "@pos_payment_sn_base/app/payment_sn_interface";
 import { WavePaymentDialog } from "@pos_payment_sn_base/app/payment_sn_wave_dialog";
+import { WaveStaticDialog } from "@pos_payment_wave/app/payment_wave_static_dialog";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 
@@ -15,6 +16,10 @@ export class PaymentWave extends PaymentSNInterface {
         // Si un paiement Wave est déjà en cours (lancé par le patch auto-trigger),
         // on ne recrée pas un nouveau checkout — on attend juste la fin du polling.
         if (this._currentReference) {
+            // Mode statique : référence déjà résolue, pas de polling nécessaire
+            if (this._currentReference.startsWith("STATIC-WAVE-")) {
+                return true;
+            }
             return await this._pollUntilDone(this._currentReference, uuid).then((success) => {
                 this._closeDialog();
                 return success;
@@ -31,6 +36,36 @@ export class PaymentWave extends PaymentSNInterface {
     }
 
     async _initPayment(line, uuid) {
+        // Détection mode statique : QR statique configuré et pas de clé API
+        if (this.payment_method.wave_static_mode && this.payment_method.wave_static_qr) {
+            return await this._initStaticPayment(line, uuid);
+        }
+        return await this._initDynamicPayment(line, uuid);
+    }
+
+    async _initStaticPayment(line, uuid) {
+        return new Promise((resolve) => {
+            const qrSrc = `data:image/png;base64,${this.payment_method.wave_static_qr}`;
+
+            const closeDialog = this.pos.env.services.dialog.add(WaveStaticDialog, {
+                amount: line.amount,
+                qrSrc,
+                onConfirm: () => {
+                    closeDialog();
+                    this._closeWaveDialog = null;
+                    resolve({ reference: `STATIC-WAVE-${Date.now()}` });
+                },
+                onCancel: () => {
+                    closeDialog();
+                    this._closeWaveDialog = null;
+                    resolve(null);
+                },
+            });
+            this._closeWaveDialog = closeDialog;
+        });
+    }
+
+    async _initDynamicPayment(line, uuid) {
         const rand = Math.random().toString(36).slice(2, 7);
         const reference = `POS-WAVE-${this.pos.session.id}-${Date.now()}-${rand}`;
         try {
@@ -67,6 +102,14 @@ export class PaymentWave extends PaymentSNInterface {
             );
             return null;
         }
+    }
+
+    async _pollUntilDone(reference, uuid) {
+        // Mode statique : le caissier a confirmé manuellement, pas de polling API
+        if (reference.startsWith("STATIC-WAVE-")) {
+            return true;
+        }
+        return super._pollUntilDone(reference, uuid);
     }
 
     _closeDialog() {
