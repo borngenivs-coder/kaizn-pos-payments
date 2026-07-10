@@ -16,7 +16,10 @@ patch(PaymentScreen.prototype, {
         if (paymentMethod?.use_payment_terminal === "wave") {
             // Décaler d'un tick pour laisser OWL mettre à jour la ligne
             // avant que sendPaymentRequest() ne cherche la "pending line".
-            Promise.resolve().then(() => this.sendPaymentRequest());
+            Promise.resolve().then(() => {
+                const waveLine = this.paymentLines.at(-1);
+                if (waveLine) this.sendPaymentRequest(waveLine);
+            });
         }
         return result;
     },
