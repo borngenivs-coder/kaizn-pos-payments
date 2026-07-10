@@ -12,6 +12,14 @@ export class PaymentWave extends PaymentSNInterface {
     }
 
     async send_payment_request(uuid) {
+        // Si un paiement Wave est déjà en cours (lancé par le patch auto-trigger),
+        // on ne recrée pas un nouveau checkout — on attend juste la fin du polling.
+        if (this._currentReference) {
+            return await this._pollUntilDone(this._currentReference, uuid).then((success) => {
+                this._closeDialog();
+                return success;
+            });
+        }
         const result = await super.send_payment_request(uuid);
         this._closeDialog();
         return result;
